@@ -1,0 +1,43 @@
+331CA Paris Cristian-Tanase
+
+Tema2.java
+
+	Citim fisierul de test dat la intrare, memoram numele fisierelor date si apoi
+creăm task-urile de tip Map in functie de chunkSize-ul cerut. Odată create task-urile,
+acestea sunt trimise in pool-ul de task-uri de tip map, unde sunt prelucrate de workeri.
+Dictionarele din rezultatele returnate de workerii de tip map sunt combinate si apoi
+sunt create noi task-uri de tip reduce care sunt trimise in pool-ul de task-uri. Rezultatele
+workerilor de tip reduce sunt sortate in functie de rank si pozitie si apoi scrise in fisier.
+
+MapTask.java
+
+	Fiecare task reprezinta un fragment dintr-un fisier de la intrare, acesta fiind bine
+determinat de pozitia sa si de lungime. In functia call, worker-ul verifica mai intai daca
+inceputul/sfarsitul fragmentului trebuie ajustat dupa regula data in enunt si daca este
+nevoie, ajusteaza offset-ul si lungimea fragmentului. Dupa ajustarea fragmentului pentru
+pastrarea regulii, se creeaza un buffer de noua lungime si worker-ul citeste din fisierul
+dat fragmentul respectiv in buffer, pentru a-l tokeniza in functie de delimitatori. Odata
+tokenizat, intr-un hashmap sunt adaugate informatiile legate de lungimea si frecventa
+de aparitie a fiecarui cuvant. Totodata, sunt retinute cuvintele de lungime maxima intr-o lista,
+iar functia returneaza un obiect de tip MapResult cu dictionarul si lista nou create si numele
+documentului.
+
+MapResult.java
+
+	Clasa folosita pentru a incapsula informatia pentru urmatoarele etape din program. Nu
+contine vreo logica specifica rezolvarii problemei.
+
+ReduceTask.java
+
+	Fiecare task reprezinta o asociere a mai multor rezultate de tip MapResult pentru un 
+singur fisier. In functia call, worker-ul va combina toate dictionarele specifice unui document
+intr-un dictionar unic care va contine lungimea si frecventa de aparitie a tuturor cuvintelor
+din documentul respectiv si dupa va returna un obiect de tip ReduceResult care va contine
+metricile calculate si cerute pentru fiecare fisier, adica rang-ul, lungimea maxima si frecventa
+cuvantului de lungime maxima.
+
+ReduceResult.java
+	
+	Clasa folosita pentru a incapsula informatia necesara pentru ultimele etape din program.
+Nu contine vreo logica specifica rezolvarii problemei, doar suprascrie metoda toString pentru a
+respecta conventia ceruta de enuntul problemei.
